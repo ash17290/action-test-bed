@@ -25,7 +25,7 @@ jobs:
             const authors = commits.reduce((acc, commit) => {
               const username = commit.author?.login || commit.commit.author?.name;
               if (username && !acc[username]) {
-                acc[username] {
+                acc[username] = {
                   name: commit.commit.author?.name,
                   email: commit.commit.author?.email,
                 }
