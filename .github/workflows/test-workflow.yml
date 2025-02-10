@@ -22,7 +22,15 @@ jobs:
             });
 
             const commits = await github.paginate(commitOpts);
-            const authors = commits.map(commit => [commit.author?.login, commit.commit.author?.name, commit.commit.author?.email]).filter(author => author[3] !== 'noreply@github.com');
+            const authors = commits.reduce((acc, commit) => {
+              const username = commit.author?.login || commit.commit.author?.name;
+              if (username && !acc[username]) {
+                acc[username] {
+                  name: commit.commit.author?.name,
+                  email: commit.commit.author?.email,
+                }
+              }
 
-            const uniqueAuthors = [...new Set(authors.map(author => author[0]))];
-            console.log(JSON.stringify(uniqueAuthors));
+              return acc;
+            }, {});
+            console.log(JSON.stringify(authors));}
