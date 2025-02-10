@@ -15,13 +15,19 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             // Get paginated list of all commits in the PR
-            const commitOpts = github.rest.pulls.listCommits.endpoint.merge({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            });
+            try {
+              const commitOpts = github.rest.pulls.listCommits.endpoint.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number
+              });
 
-            const commits = await github.paginate(commitOpts);
+              const { data: commits } = await github.paginate(commitOpts);
+            } catch (error) {
+              core.setFailed(error.message);
+            }
+
+            // Get unique authors from the commits list
             const authors = commits.reduce((acc, commit) => {
               const username = commit.author?.login || commit.commit.author?.name;
               if (username && !acc[username]) {
@@ -33,4 +39,11 @@ jobs:
 
               return acc;
             }, {});
-            console.log(JSON.stringify(authors));
+
+            // Create a string of the form "Co-authored-by: Name <email>"
+            // ref: https://docs.github.com/en/pull-requests/committing-changes-to-your-project/creating-and-editing-commits/creating-a-commit-with-multiple-authors
+            const coAuthors = Object.values(authors).map(author => {
+              return `Co-authored-by: ${author.name} <${author.email}>`;
+            }).join('\n');
+
+            console.log(coAuthors);
