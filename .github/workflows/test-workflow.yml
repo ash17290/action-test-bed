@@ -33,4 +33,4 @@ jobs:
 
               return acc;
             }, {});
-            console.log(JSON.stringify(authors));}
+            console.log(JSON.stringify(authors));
