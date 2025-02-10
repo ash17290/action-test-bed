@@ -55,4 +55,9 @@ jobs:
               return `Co-authored-by: ${author.name} <${author.email}>`;
             }).join('\n');
 
-            console.log(coAuthors);
+            core.debug(coAuthors);;
+
+            return coAuthors;
+
+      - name: Automerge PR    
+        run: echo ${{ steps.create-commit-message.outputs.result }}
