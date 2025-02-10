@@ -22,5 +22,7 @@ jobs:
             });
 
             const commits = await github.paginate(commitOpts);
+            const authors = commits.map(commit => [commit.author.login, commit.commit.author.name, commit.commit.author.email]).filter(author => author[3] !== 'noreply@github.com');
 
-            console.log(JSON.stringify(commits));
+            const uniqueAuthors = [...new Set(authors.map(author => author[0]))];
+            console.log(JSON.stringify(uniqueAuthors));
