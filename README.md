@@ -1,3 +1,3 @@
 # action-test-bed
 
-Test Changeset
+Test Automerge
