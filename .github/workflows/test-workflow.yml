@@ -1,11 +1,24 @@
-name: Test Workflow
+# This workflow is centrally managed in https://github.com/asyncapi/.github/
+# Don't make changes to this file in this repo as they will be overwritten with changes made to the same file in above mentioned repo
+
+# Purpose of this workflow is to allow people to merge PR without a need of maintainer doing it. If all checks are in place (including maintainers approval) - JUST MERGE IT!
+name: Automerge For Humans
 
 on:
   pull_request_target:
-    types: [opened, synchronize]
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
 
 jobs:
-  test:
+  automerge-for-humans:
+    # it runs only if PR actor is not a bot, at least not a bot that we know
     runs-on: ubuntu-latest
     steps:
       - name: Get PR authors
@@ -35,6 +48,11 @@ jobs:
           script: |
             const commits = ${{ steps.authors.outputs.result }};
 
+            if (commits.length === 0) {
+              core.setFailed('No commits found in the PR');
+              return '';
+            }
+
             // Get unique authors from the commits list
             const authors = commits.reduce((acc, commit) => {
               const username = commit.author?.login || commit.commit.author?.name;
@@ -54,7 +72,7 @@ jobs:
               return `Co-authored-by: ${author.name} <${author.email}>`;
             }).join('\n');
 
-            core.debug(coAuthors);;
+            console.log(coAuthors);;
 
             return coAuthors;
 
@@ -66,10 +84,6 @@ jobs:
           MERGE_METHOD: "squash"
           # Using the output of the previous step (`Co-authored-by: ...` lines) as commit description.
           # Important to keep 2 empty lines as https://docs.github.com/en/pull-requests/committing-changes-to-your-project/creating-and-editing-commits/creating-a-commit-with-multiple-authors#creating-co-authored-commits-on-the-command-line mentions
-          MERGE_COMMIT_MESSAGE: |
-            {pullRequest.title} (#{pullRequest.number})
-
-            
-            ${{ steps.create-commit-message.outputs.commitMessage }}
+          MERGE_COMMIT_MESSAGE: "{pullRequest.title} (#{pullRequest.number})\n\n\n${{ steps.create-commit-message.outputs.result }}"
           MERGE_RETRIES: "20"
           MERGE_RETRY_SLEEP: "30000"
