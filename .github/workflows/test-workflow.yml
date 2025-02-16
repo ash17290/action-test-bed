@@ -88,6 +88,6 @@ jobs:
             {pullRequest.title} (#{pullRequest.number})
 
             
-            ${{ steps.create-commit-message.outputs.commitMessage }}
+            ${{ steps.create-commit-message.outputs.result }}
           MERGE_RETRIES: "20"
           MERGE_RETRY_SLEEP: "30000"
