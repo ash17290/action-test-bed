@@ -46,7 +46,6 @@ const getReleasedPackages = async (pullRequest, github) => {
   return releasedPackages;
 }
 
-
 const getReleaseNotes = async (pullRequest, github) => {
   const commits = await getFormattedCommits(pullRequest, github);
   /**
@@ -61,7 +60,6 @@ const getReleaseNotes = async (pullRequest, github) => {
 
   return releaseNotes;
 }
-
 
 const getChangesetContents = async (pullRequest, github) => {
   const title = pullRequest.title;
@@ -90,6 +88,48 @@ const getChangesetContents = async (pullRequest, github) => {
   return changesetContents;
 };
 
+/**
+ * This function checks if a comment has already been created by the workflow.
+ * If not, it creates a comment with the changeset.
+ * If it is already created, it updates the comment with the new changeset.
+ */
+const commentWorkflow = async (pullRequest, github, changesetContents) => {
+  const body = `
+    #### Changeset has been generated for this PR as part of auto-changeset workflow.
+    
+    <details>
+      <summary>Please review the changeset before merging the PR.</summary>
+      ${changesetContents}
+    </details>
+
+    [If you are a maintainer or the author of the PR, you can change the changeset by clicking here](https://github.com/${pullRequest.head.repo.full_name}/${pullRequest.head.ref}/edit/changeset/${pullRequest.number}.md)
+  `
+  const comments = await github.rest.issues.listComments({
+    owner: pullRequest.base.repo.owner.login,
+    repo: pullRequest.base.repo.name,
+    issue_number: pullRequest.number,
+  });
+
+  const comment = comments.data.find((comment) => comment.body.includes('Changeset has been generated for this PR as part of auto-changeset workflow.'));
+  if (comment) {
+    await github.rest.issues.updateComment({
+      owner: pullRequest.base.repo.owner.login,
+      repo: pullRequest.base.repo.name,
+      comment_id: comment.id,
+      body: body,
+    });
+  } else {
+    await github.rest.issues.createComment({
+      owner: pullRequest.base.repo.owner.login,
+      repo: pullRequest.base.repo.name,
+      issue_number: pullRequest.number,
+      body: body,
+      user: 'asyncapi-bot',
+    });
+  }
+}
+
 module.exports = {
   getChangesetContents,
+  commentWorkflow,
 };
