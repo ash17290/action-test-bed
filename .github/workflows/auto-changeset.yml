@@ -67,8 +67,6 @@ jobs:
           fi
 
       - name: Push changeset file
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git remote set-url origin https://github.com/${{ github.event.pull_request.head.repo.full_name }}
+          git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.event.pull_request.head.repo.full_name }}
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
