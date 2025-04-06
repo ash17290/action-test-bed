@@ -73,4 +73,5 @@ jobs:
         run: |
           const { commentWorkflow } = require('./.github/workflows/changeset-utils/index.js')
           const pullRequest = context.payload.pull_request;
-          await commentWorkflow(pullRequest, github, `${{ steps.get_changeset_contents.outputs.result }}`)
+          const changesetContents = ${{ steps.get_changeset_contents.outputs.result }}
+          await commentWorkflow(pullRequest, github, changesetContents)
