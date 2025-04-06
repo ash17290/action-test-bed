@@ -22,9 +22,6 @@ jobs:
       ) || true 
     runs-on: ubuntu-latest
     steps:
-      - name: Install dependencies
-        run: npm install read-package-up
-
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
@@ -34,6 +31,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: gh pr checkout ${{ github.event.pull_request.number }}
+
+      - name: Setup PNPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install PNPM
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install read-package-up -w
 
       - name: Get changeset contents
         id: get_changeset_contents
