@@ -14,6 +14,7 @@ jobs:
     #  TODO: remove true after testing is done
     if: |
       startsWith(github.repository, 'asyncapi/') &&
+      (!contains(github.event.pull_request.labels, 'skip-changeset')) &&
       ( startsWith(github.event.pull_request.title, 'fix:') ||
         startsWith(github.event.pull_request.title, 'feat:') ||
         startsWith(github.event.pull_request.title, 'fix!:') ||
@@ -31,14 +32,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: gh pr checkout ${{ github.event.pull_request.number }}
 
+      - name: Install dependencies
+        run: npm install read-pkg-up
+
       - name: Get changeset contents
         id: get_changeset_contents
         uses: actions/github-script@v7
         with:
           script: |
-            const { getChangesetContents } = require('./.github/workflows/changeset-utils/index.js')
+            const { getChangesetContents } = require('./.github/workflows/changeset-utils/index.js')            
             const pullRequest = context.payload.pull_request;
-            const changesetContents = await getChangesetContents(pullRequest);
+            const changesetContents = await getChangesetContents(pullRequest, github)
+            console.log(changesetContents);
             return changesetContents;
 
       - name: Create changeset file
