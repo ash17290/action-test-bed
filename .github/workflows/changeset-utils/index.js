@@ -1,10 +1,14 @@
 const path = require('path');
 const { readPackageUpAsync } = require('read-pkg-up');
 
+// @todo
+// Check if maintainer can modify the head
+// Put a suitable comments
+
 const getFormattedCommits = async (pullRequest, github) => {
   const commits = await github.rest.pulls.listCommits({
-    owner: pullRequest.user.login,
-    repo: pullRequest.repo.name,
+    owner: pullRequest.base.repo.owner.login,
+    repo: pullRequest.base.repo.name,
     pull_number: pullRequest.number,
   });
 
@@ -18,8 +22,8 @@ const getFormattedCommits = async (pullRequest, github) => {
 
 const getReleasedPackages = async (pullRequest, github) => {
   const files = await github.rest.pulls.listFiles({
-    owner: pullRequest.user.login,
-    repo: pullRequest.repo.name,
+    owner: pullRequest.base.repo.owner.login,
+    repo: pullRequest.base.repo.name,
     pull_number: pullRequest.number,
   });
 
@@ -39,6 +43,7 @@ const getReleasedPackages = async (pullRequest, github) => {
 
 
 const getReleaseNotes = async (pullRequest, github) => {
+  console.log(JSON.stringify(pullRequest, null, 2));
   const commits = await getFormattedCommits(pullRequest, github);
   /**
    * Release notes are generated from the commits.
