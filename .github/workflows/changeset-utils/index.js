@@ -84,8 +84,8 @@ const getChangesetContents = async (pullRequest, github) => {
   const releasedPackages = await getReleasedPackages(pullRequest, github);
 
   const changesetContents = releasedPackages.map((pkg) => {
-    return `---\n'${pkg}': ${releaseVersion}\n---\n\n${releaseNotes}\n\n`;
-  }).join('\n');
+    return `---\n'${pkg}': ${releaseVersion}\n`;
+  }).join('\n') + `---\n\n${releaseNotes}\n\n`
 
   return changesetContents;
 };
