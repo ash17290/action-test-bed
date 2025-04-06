@@ -14,7 +14,7 @@ const getFormattedCommits = async (pullRequest, github) => {
   const commits = await github.paginate(commitOpts);
 
   // Filter merge commits and commits by asyncapi-bot
-  const filteredCommits = commits.data.filter((commit) => {
+  const filteredCommits = commits.filter((commit) => {
     return !commit.commit.message.startsWith('Merge pull request') && !commit.commit.message.startsWith('Merge branch') && !commit.commit.author.name.startsWith('asyncapi-bot') && !commit.commit.author.name.startsWith('dependabot[bot]');
   });
 
@@ -27,15 +27,15 @@ const getFormattedCommits = async (pullRequest, github) => {
 }
 
 const getReleasedPackages = async (pullRequest, github) => {
-  const files = await github.rest.pulls.listFiles({
+  const files = await github.paginate(github.rest.pulls.listFiles.endpoint.merge({
     owner: pullRequest.base.repo.owner.login,
     repo: pullRequest.base.repo.name,
     pull_number: pullRequest.number,
-  });
+  }));
 
   const releasedPackages = [];
   const ignoredFiles = ['yarn.lock', 'package-lock.json', 'pnpm-lock.yaml'];
-  for (const file of files.data) {
+  for (const file of files) {
     if (!ignoredFiles.includes(file.filename)) {
       const cwd = path.resolve(path.dirname(file.filename));
       const { packageJson } = await readPackageUp(cwd);
@@ -44,6 +44,8 @@ const getReleasedPackages = async (pullRequest, github) => {
       }
     } 
   }
+
+  console.debug('Filenames', files.map((file) => file.filename));
   return releasedPackages;
 }
 
