@@ -1,5 +1,6 @@
 module.exports = {
   extends: ["turbo", "prettier", "next"],
+  changeset: ["sdas"],
   rules: {
     "@next/next/no-html-link-for-pages": "off",
   },
