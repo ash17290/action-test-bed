@@ -52,7 +52,7 @@ jobs:
             }
 
       - name: Create changeset file
-        run: "echo -e '---\n'@asyncapi/cli': ${{ steps.determine_release_type.outputs.result }}\n---\n\n ${{ github.event.pull_request.title }}\n' > .changeset/${{ github.event.pull_request.number }}.md"
+        run: "echo -e '---\n'@asyncapi/cli': ${{ steps.determine_release_type.outputs.result }}\n---\n\n ${{ github.event.pull_request.title }}$(date +%s)\n' > .changeset/${{ github.event.pull_request.number }}.md"
 
       - name: Commit changeset file
         run: |
@@ -67,6 +67,8 @@ jobs:
           fi
 
       - name: Push changeset file
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/${{ github.event.pull_request.head.repo.full_name }}
+          git remote set-url origin https://github.com/${{ github.event.pull_request.head.repo.full_name }}
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
