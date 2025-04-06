@@ -14,7 +14,7 @@ const getFormattedCommits = async (pullRequest, github) => {
 
   // Filter merge commits and commits by asyncapi-bot
   const filteredCommits = commits.data.filter((commit) => {
-    return !commit.commit.message.startsWith('Merge pull request') && !commit.commit.message.startsWith('Merge branch') && !commit.commit.author.login.startsWith('asyncapi-bot') && !commit.commit.author.login.startsWith('dependabot');
+    return !commit.commit.message.startsWith('Merge pull request') && !commit.commit.message.startsWith('Merge branch') && !commit.commit.author.name.startsWith('asyncapi-bot') && !commit.commit.author.name.startsWith('dependabot[bot]');
   });
 
   return filteredCommits.map((commit) => {
