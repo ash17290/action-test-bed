@@ -33,7 +33,7 @@ jobs:
         run: gh pr checkout ${{ github.event.pull_request.number }}
 
       - name: Install dependencies
-        run: npm install read-pkg-up
+        run: npm install read-package-up
 
       - name: Get changeset contents
         id: get_changeset_contents
