@@ -70,7 +70,10 @@ jobs:
       - name: Comment workflow
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          const { commentWorkflow } = require('./.github/workflows/changeset-utils/index.js')
-          const pullRequest = context.payload.pull_request;
-          await commentWorkflow(pullRequest, github, `${{ steps.get_changeset_contents.outputs.result }}`)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { commentWorkflow } = require('./.github/workflows/changeset-utils/index.js')
+            const pullRequest = context.payload.pull_request;
+            const changesetContents = ${{ steps.get_changeset_contents.outputs.result }}
+            await commentWorkflow(pullRequest, github, changesetContents)
