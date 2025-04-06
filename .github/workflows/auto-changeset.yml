@@ -18,7 +18,7 @@ jobs:
         startsWith(github.event.pull_request.title, 'feat:') ||
         startsWith(github.event.pull_request.title, 'fix!:') ||
         startsWith(github.event.pull_request.title, 'feat!:')
-      )
+      ) || true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
