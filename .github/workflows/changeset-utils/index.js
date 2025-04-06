@@ -12,7 +12,12 @@ const getFormattedCommits = async (pullRequest, github) => {
     pull_number: pullRequest.number,
   });
 
-  return commits.data.map((commit) => {
+  // Filter merge commits and commits by asyncapi-bot
+  const filteredCommits = commits.data.filter((commit) => {
+    return !commit.commit.message.startsWith('Merge pull request') && !commit.commit.message.startsWith('Merge branch') && !commit.commit.author.login.startsWith('asyncapi-bot') && !commit.commit.author.login.startsWith('dependabot');
+  });
+
+  return filteredCommits.map((commit) => {
     return {
       commit_sha: commit.sha.slice(0, 7), // first 7 characters of the commit sha is enough to identify the commit
       commit_message: commit.commit.message,
