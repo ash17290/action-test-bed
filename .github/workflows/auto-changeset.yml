@@ -32,20 +32,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: gh pr checkout ${{ github.event.pull_request.number }}
 
-      - name: Install PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: false
-
-      - name: Setup PNPM
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'pnpm'      
-
-      - name: Install dependencies
-        run: pnpm install read-package-up -w
+      - name: Install specific package in temp dir
+        run: |
+          mkdir temp-install
+          cd temp-install
+          npm init -y
+          npm install read-package-up@11.0.0
+          cp -r node_modules ../node_modules
+          cd ..
 
       - name: Get changeset contents
         id: get_changeset_contents
