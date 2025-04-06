@@ -1,3 +1,3 @@
 # action-test-bed
 
-Test Automerge 6
+Test Automerge 7
