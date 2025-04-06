@@ -1,5 +1,5 @@
 const path = require('path');
-const { readPackageUpAsync } = require('read-pkg-up');
+const readPackageUp = require('read-package-up');
 
 // @todo
 // Check if maintainer can modify the head
@@ -32,7 +32,7 @@ const getReleasedPackages = async (pullRequest, github) => {
   for (const file of files.data) {
     if (!ignoredFiles.includes(file.filename)) {
       const cwd = path.resolve(path.dirname(file.filename));
-      const { packageJson } = await readPackageUpAsync(cwd);
+      const { packageJson } = await readPackageUp(cwd);
       if (!releasedPackages.includes(packageJson.name)) {
         releasedPackages.push(packageJson.name);
       }
@@ -43,7 +43,6 @@ const getReleasedPackages = async (pullRequest, github) => {
 
 
 const getReleaseNotes = async (pullRequest, github) => {
-  console.log(JSON.stringify(pullRequest, null, 2));
   const commits = await getFormattedCommits(pullRequest, github);
   /**
    * Release notes are generated from the commits.
