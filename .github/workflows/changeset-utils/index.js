@@ -34,13 +34,13 @@ const getReleasedPackages = async (pullRequest, github) => {
   }));
 
   const releasedPackages = [];
-  const ignoredFiles = ['yarn.lock', 'package-lock.json', 'pnpm-lock.yaml'];
+  const ignoredFiles = ['README.md', 'CHANGELOG.md', './changeset/README.md', 'package.json', 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml'];
   for (const file of files) {
     if (!ignoredFiles.includes(file.filename)) {
       const cwd = path.resolve(path.dirname(file.filename));
-      const { packageJson } = await readPackageUp(cwd);
-      if (!releasedPackages.includes(packageJson.name)) {
-        releasedPackages.push(packageJson.name);
+      const pack = await readPackageUp(cwd);
+      if (pack && pack?.packageJson?.name && !releasedPackages.includes(pack.packageJson.name)) {
+        releasedPackages.push(pack.packageJson.name);
       }
     } 
   }
