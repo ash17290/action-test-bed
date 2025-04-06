@@ -59,7 +59,12 @@ jobs:
           git config --global user.name asyncapi-bot
           git config --global user.email info@asyncapi.io
           git add .changeset/${{ github.event.pull_request.number }}.md
-          git commit -m "chore: add changeset for PR #${{ github.event.pull_request.number }}"
+          # Check if there are any changes to commit
+          if git diff --quiet HEAD; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: add changeset for PR #${{ github.event.pull_request.number }}"
+          fi
 
       - name: Push changeset file
         env:
