@@ -5,11 +5,13 @@ const { readPackageUp } = require('read-package-up');
 // Check if maintainer can modify the head
 
 const getFormattedCommits = async (pullRequest, github) => {
-  const commits = await github.rest.pulls.listCommits({
+  const commitOpts = github.rest.pulls.listCommits.endpoint.merge({
     owner: pullRequest.base.repo.owner.login,
     repo: pullRequest.base.repo.name,
     pull_number: pullRequest.number,
   });
+
+  const commits = await github.paginate(commitOpts);
 
   // Filter merge commits and commits by asyncapi-bot
   const filteredCommits = commits.data.filter((commit) => {
