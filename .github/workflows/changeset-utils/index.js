@@ -37,7 +37,7 @@ const getReleasedPackages = async (pullRequest, github) => {
   const ignoredFiles = ['README.md', 'CHANGELOG.md', './changeset/README.md', 'package.json', 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml'];
   for (const file of files) {
     if (!ignoredFiles.includes(file.filename)) {
-      const cwd = path.resolve(path.dirname(file.filename));
+      const cwd = path.resolve(file.filename);
       console.debug('CWD', cwd);
       const pack = await readPackageUp(cwd);
       console.debug('Package', JSON.stringify(pack, null, 2));
