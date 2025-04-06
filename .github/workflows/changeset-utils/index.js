@@ -38,6 +38,7 @@ const getReleasedPackages = async (pullRequest, github) => {
   for (const file of files) {
     if (!ignoredFiles.includes(file.filename)) {
       const cwd = path.resolve(path.dirname(file.filename));
+      console.debug('CWD', cwd);
       const pack = await readPackageUp(cwd);
       console.debug('Package', JSON.stringify(pack, null, 2));
       if (pack && pack?.packageJson?.name && !releasedPackages.includes(pack.packageJson.name)) {
