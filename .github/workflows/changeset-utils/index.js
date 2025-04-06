@@ -38,7 +38,7 @@ const getReleasedPackages = async (pullRequest, github) => {
   for (const file of files) {
     if (!ignoredFiles.includes(file.filename)) {
       const cwd = path.resolve(path.dirname(file.filename));
-      const pack = await readPackageUp(cwd);
+      const pack = await readPackageUp({ cwd });
       if (pack && pack?.packageJson?.name && !releasedPackages.includes(pack.packageJson.name)) {
         releasedPackages.push(pack.packageJson.name);
       }
@@ -91,8 +91,8 @@ const getChangesetContents = async (pullRequest, github) => {
   console.debug('Released packages', releasedPackages);
   console.debug('Release notes', releaseNotes);
 
-  const changesetContents = releasedPackages.map((pkg) => {
-    return `---\n'${pkg}': ${releaseVersion}\n`;
+  const changesetContents = `---\n` + releasedPackages.map((pkg) => {
+    return `'${pkg}': ${releaseVersion}`;
   }).join('\n') + `---\n\n${releaseNotes}\n\n`
 
   return changesetContents;
