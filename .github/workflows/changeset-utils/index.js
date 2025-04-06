@@ -1,5 +1,5 @@
 const path = require('path');
-const readPackageUp = require('read-package-up');
+const { readPackageUp } = require('read-package-up');
 
 // @todo
 // Check if maintainer can modify the head
