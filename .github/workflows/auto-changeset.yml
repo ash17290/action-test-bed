@@ -40,6 +40,7 @@ jobs:
           npm install read-package-up@11.0.0
           cp -r node_modules ../node_modules
           cd ..
+          rm -rf temp-install
 
       - name: Get changeset contents
         id: get_changeset_contents
@@ -59,7 +60,6 @@ jobs:
           git config --global user.name asyncapi-bot
           git config --global user.email info@asyncapi.io
           git add .changeset/${{ github.event.pull_request.number }}.md
-          git restore pnpm-lock.yaml package.json
           # Check if there are any changes to commit
           if git diff --quiet HEAD; then
             echo "No changes to commit"
